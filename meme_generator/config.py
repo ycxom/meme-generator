@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Union
+from typing import Literal, Optional, Union
 
 import toml
 from pydantic import BaseModel
@@ -33,8 +33,14 @@ class GifConfig(BaseModel):
 
 
 class TranslatorConfig(BaseModel):
+    type: Literal["baidu", "openai", "gemini"] = "baidu"
+    url: str = "https://api.openai.com/v1/chat/completions"
+    model: str = "gpt-4o"
     baidu_trans_appid: str = ""
     baidu_trans_apikey: str = ""
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
+    gemini_api_base: str = "https://generativelanguage.googleapis.com"
 
 
 class ServerConfig(BaseModel):

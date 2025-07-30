@@ -1,6 +1,7 @@
 import asyncio
 import hashlib
 import inspect
+import json
 import math
 import random
 import time
@@ -365,27 +366,88 @@ def skia_sampling_options() -> skia.SamplingOptions:
 
 
 def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
-    appid = meme_config.translate.baidu_trans_appid
-    apikey = meme_config.translate.baidu_trans_apikey
-    if not appid or not apikey:
-        raise MemeFeedback(
-            '"baidu_trans_appid" 或 "baidu_trans_apikey" 未设置，请检查配置文件！'
+    if meme_config.translate.type == "baidu":
+        appid = meme_config.translate.baidu_trans_appid
+        apikey = meme_config.translate.baidu_trans_apikey
+        if not appid or not apikey:
+            raise MemeFeedback(
+                '"baidu_trans_appid" 或 "baidu_trans_apikey" 未设置，请检查配置文件！'
+            )
+        salt = str(round(time.time() * 1000))
+        sign_raw = appid + text + salt + apikey
+        sign = hashlib.md5(sign_raw.encode("utf8")).hexdigest()
+        params = {
+            "q": text,
+            "from": lang_from,
+            "to": lang_to,
+            "appid": appid,
+            "salt": salt,
+            "sign": sign,
+        }
+        url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
+        resp = httpx.get(url, params=params)
+        result = resp.json()
+        return result["trans_result"][0]["dst"]
+    
+    elif meme_config.translate.type == "openai":
+        apikey = meme_config.translate.baidu_trans_apikey
+        headers = {"Content-Type": "application/json"}
+        if apikey:
+            headers["Authorization"] = f"Bearer {apikey}"
+
+        data = {
+            "model": meme_config.translate.model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": f"Translate the following text from {lang_from} to {lang_to}, just return the translated text, do not output any other content.",
+                },
+                {"role": "user", "content": text},
+            ],
+            "stream": False,
+        }
+        resp = httpx.post(
+            meme_config.translate.url, headers=headers, json=data, timeout=20
         )
-    salt = str(round(time.time() * 1000))
-    sign_raw = appid + text + salt + apikey
-    sign = hashlib.md5(sign_raw.encode("utf8")).hexdigest()
-    params = {
-        "q": text,
-        "from": lang_from,
-        "to": lang_to,
-        "appid": appid,
-        "salt": salt,
-        "sign": sign,
-    }
-    url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
-    resp = httpx.get(url, params=params)
-    result = resp.json()
-    return result["trans_result"][0]["dst"]
+        result = resp.json()
+
+        if "choices" in result:
+            return result["choices"][0]["message"]["content"]
+        elif "message" in result:
+            return result["message"]["content"]
+        else:
+            raise MemeFeedback(f"无法解析翻译API的响应：{result}")
+            
+    elif meme_config.translate.type == "gemini":
+        api_key = meme_config.translate.gemini_api_key
+        if not api_key:
+            raise MemeFeedback('"gemini_api_key" 未设置，请检查配置文件！')
+
+        api_base = meme_config.translate.gemini_api_base
+        model = meme_config.translate.gemini_model
+        url = f"{api_base}/v1beta/models/{model}:generateContent?key={api_key}"
+        
+        headers = {"Content-Type": "application/json"}
+        data = {
+            "contents": [
+                {
+                    "parts": [
+                        {
+                            "text": f"Translate the following text from {lang_from} to {lang_to}, just return the translated text, do not output any other content.\n\n{text}"
+                        }
+                    ]
+                }
+            ]
+        }
+        
+        resp = httpx.post(url, headers=headers, json=data, timeout=30)
+        resp.raise_for_status()
+        result = resp.json()
+
+        if "candidates" in result:
+            return result["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            raise MemeFeedback(f"无法解析Gemini API的响应：{result}")
 
 
 def random_text() -> str:
