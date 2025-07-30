@@ -30,17 +30,20 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 [translate]
 # 翻译服务类型，可选 "baidu" 或 "openai"，"gemini"
 type = "gemini"
-# OpenAI API 的 URL
-url = "http://127.0.0.1:11434/v1/chat/completions"  # Ollama API
-# OpenAI 使用的模型
-model = "gemma3:4b"
-# 百度翻译 AppID
-baidu_trans_appid = ""
-# 百度翻译/OpenAI API 密钥
-baidu_trans_apikey = ""
-gemini_api_key = "xxxxxxx"
-gemini_model = "gemini-2.0-flash"
-gemini_api_base = "https://generativelanguage.googleapis.com" # 官方API地址/自定义API地址
+
+[translate.baidu]
+appid = "$TRANSLATE_BAIDU_APPID" # 百度翻译的 appid
+apikey = "$TRANSLATE_BAIDU_APIKEY" # 百度翻译的 apikey
+
+[translate.openai]
+api_key = "" # OpenAI API Key / Ollama 可留空
+url = "http://127.0.0.1:11434/v1/chat/completions" # OpenAI API 的 URL / Ollama API
+model = "gemma3:4b" # OpenAI 使用的模型
+
+[translate.gemini]
+api_key = "" # Gemini API Key
+api_base = "https://generativelanguage.googleapis.com" # 官方API地址/自定义API地址
+model = "gemini-2.0-flash" # 模型
 ```
 
 ## 表情列表

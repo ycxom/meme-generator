@@ -31,10 +31,10 @@ ENV TZ="Asia/Shanghai" \
   TRANSLATE_BAIDU_APIKEY="" \
   TRANSLATE_OPENAI_API_KEY="" \
   TRANSLATE_OPENAI_URL="https://api.openai.com/v1/chat/completions" \
-  TRANSLATE_OPENAI_MODEL="gpt-3.5-turbo" \
+  TRANSLATE_OPENAI_MODEL="gpt-4o" \
   TRANSLATE_GEMINI_API_KEY="" \
   TRANSLATE_GEMINI_API_BASE="https://generativelanguage.googleapis.com" \
-  TRANSLATE_GEMINI_MODEL="gemini-1.5-flash"
+  TRANSLATE_GEMINI_MODEL="gemini-2.0-flash"
 
 COPY --from=tmp /tmp/requirements.txt /app/requirements.txt
 
