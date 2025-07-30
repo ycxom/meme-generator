@@ -366,21 +366,21 @@ def skia_sampling_options() -> skia.SamplingOptions:
 
 
 def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
-    if meme_config.translate.type == "baidu":
-        appid = meme_config.translate.baidu_trans_appid
-        apikey = meme_config.translate.baidu_trans_apikey
-        if not appid or not apikey:
-            raise MemeFeedback(
-                '"baidu_trans_appid" 或 "baidu_trans_apikey" 未设置，请检查配置文件！'
-            )
+    trans_config = meme_config.translate
+    
+    if trans_config.type == "baidu":
+        baidu_config = trans_config.baidu
+        if not baidu_config.appid or not baidu_config.apikey:
+            raise MemeFeedback('"baidu.appid" 或 "baidu.apikey" 未设置，请检查配置文件！')
+            
         salt = str(round(time.time() * 1000))
-        sign_raw = appid + text + salt + apikey
+        sign_raw = baidu_config.appid + text + salt + baidu_config.apikey
         sign = hashlib.md5(sign_raw.encode("utf8")).hexdigest()
         params = {
             "q": text,
             "from": lang_from,
             "to": lang_to,
-            "appid": appid,
+            "appid": baidu_config.appid,
             "salt": salt,
             "sign": sign,
         }
@@ -388,15 +388,15 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
         resp = httpx.get(url, params=params)
         result = resp.json()
         return result["trans_result"][0]["dst"]
-    
-    elif meme_config.translate.type == "openai":
-        apikey = meme_config.translate.baidu_trans_apikey
+
+    elif trans_config.type == "openai":
+        openai_config = trans_config.openai
         headers = {"Content-Type": "application/json"}
-        if apikey:
-            headers["Authorization"] = f"Bearer {apikey}"
+        if openai_config.api_key:
+            headers["Authorization"] = f"Bearer {openai_config.api_key}"
 
         data = {
-            "model": meme_config.translate.model,
+            "model": openai_config.model,
             "messages": [
                 {
                     "role": "system",
@@ -407,7 +407,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
             "stream": False,
         }
         resp = httpx.post(
-            meme_config.translate.url, headers=headers, json=data, timeout=20
+            openai_config.url, headers=headers, json=data, timeout=20
         )
         result = resp.json()
 
@@ -418,14 +418,12 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
         else:
             raise MemeFeedback(f"无法解析翻译API的响应：{result}")
             
-    elif meme_config.translate.type == "gemini":
-        api_key = meme_config.translate.gemini_api_key
-        if not api_key:
-            raise MemeFeedback('"gemini_api_key" 未设置，请检查配置文件！')
+    elif trans_config.type == "gemini":
+        gemini_config = trans_config.gemini
+        if not gemini_config.api_key:
+            raise MemeFeedback('"gemini.api_key" 未设置，请检查配置文件！')
 
-        api_base = meme_config.translate.gemini_api_base
-        model = meme_config.translate.gemini_model
-        url = f"{api_base}/v1beta/models/{model}:generateContent?key={api_key}"
+        url = f"{gemini_config.api_base}/v1beta/models/{gemini_config.model}:generateContent?key={gemini_config.api_key}"
         
         headers = {"Content-Type": "application/json"}
         data = {

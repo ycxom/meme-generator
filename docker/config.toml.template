@@ -9,13 +9,20 @@ gif_max_frames = $GIF_MAX_FRAMES
 
 [translate]
 type = "$TRANSLATE_TYPE"
-url = "$TRANSLATE_URL"
-model = "$TRANSLATE_MODEL"
-baidu_trans_appid = "$BAIDU_TRANS_APPID"
-baidu_trans_apikey = "$BAIDU_TRANS_APIKEY"
-gemini_api_key = "$TRANSLATE_GEMINI_API_KEY"
-gemini_model = "$TRANSLATE_GEMINI_MODEL"
-gemini_api_base = "$TRANSLATE_GEMINI_API_BASE"
+
+[translate.baidu]
+appid = "$TRANSLATE_BAIDU_APPID"
+apikey = "$TRANSLATE_BAIDU_APIKEY"
+
+[translate.openai]
+api_key = "$TRANSLATE_OPENAI_API_KEY"
+url = "$TRANSLATE_OPENAI_URL"
+model = "$TRANSLATE_OPENAI_MODEL"
+
+[translate.gemini]
+api_key = "$TRANSLATE_GEMINI_API_KEY"
+api_base = "$TRANSLATE_GEMINI_API_BASE"
+model = "$TRANSLATE_GEMINI_MODEL"
 
 [server]
 host = "0.0.0.0"

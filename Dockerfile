@@ -19,15 +19,22 @@ EXPOSE 2233
 
 VOLUME /data
 
-ENV TZ=Asia/Shanghai \
-  LOAD_BUILTIN_MEMES=true \
+ENV TZ="Asia/Shanghai" \
+  LOAD_BUILTIN_MEMES="true" \
   MEME_DIRS="[\"/data/memes\"]" \
   MEME_DISABLED_LIST="[]" \
-  GIF_MAX_SIZE=10.0 \
-  GIF_MAX_FRAMES=100 \
-  BAIDU_TRANS_APPID="" \
-  BAIDU_TRANS_APIKEY="" \
-  LOG_LEVEL="INFO"
+  GIF_MAX_SIZE="10.0" \
+  GIF_MAX_FRAMES="100" \
+  LOG_LEVEL="INFO" \
+  TRANSLATE_TYPE="baidu" \
+  TRANSLATE_BAIDU_APPID="" \
+  TRANSLATE_BAIDU_APIKEY="" \
+  TRANSLATE_OPENAI_API_KEY="" \
+  TRANSLATE_OPENAI_URL="https://api.openai.com/v1/chat/completions" \
+  TRANSLATE_OPENAI_MODEL="gpt-3.5-turbo" \
+  TRANSLATE_GEMINI_API_KEY="" \
+  TRANSLATE_GEMINI_API_BASE="https://generativelanguage.googleapis.com" \
+  TRANSLATE_GEMINI_MODEL="gemini-1.5-flash"
 
 COPY --from=tmp /tmp/requirements.txt /app/requirements.txt
 

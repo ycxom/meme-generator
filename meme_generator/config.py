@@ -32,15 +32,28 @@ class GifConfig(BaseModel):
     gif_max_frames: int = 100
 
 
-class TranslatorConfig(BaseModel):
-    type: Literal["baidu", "openai", "gemini"] = "baidu"
+class BaiduTranslatorConfig(BaseModel):
+    appid: str = ""
+    apikey: str = ""
+
+
+class OpenAITranslatorConfig(BaseModel):
+    api_key: str = ""
     url: str = "https://api.openai.com/v1/chat/completions"
     model: str = "gpt-4o"
-    baidu_trans_appid: str = ""
-    baidu_trans_apikey: str = ""
-    gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.5-flash"
-    gemini_api_base: str = "https://generativelanguage.googleapis.com"
+
+
+class GeminiTranslatorConfig(BaseModel):
+    api_key: str = ""
+    api_base: str = "https://generativelanguage.googleapis.com"
+    model: str = "gemini-2.0-flash"
+
+
+class TranslatorConfig(BaseModel):
+    type: Literal["baidu", "openai", "gemini"] = "baidu"
+    baidu: BaiduTranslatorConfig = BaiduTranslatorConfig()
+    openai: OpenAITranslatorConfig = OpenAITranslatorConfig()
+    gemini: GeminiTranslatorConfig = GeminiTranslatorConfig()
 
 
 class ServerConfig(BaseModel):
