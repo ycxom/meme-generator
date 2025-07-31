@@ -1,7 +1,6 @@
 import asyncio
 import hashlib
 import inspect
-import json
 import math
 import random
 import time
@@ -367,12 +366,14 @@ def skia_sampling_options() -> skia.SamplingOptions:
 
 def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
     trans_config = meme_config.translate
-    
+
     if trans_config.type == "baidu":
         baidu_config = trans_config.baidu
         if not baidu_config.appid or not baidu_config.apikey:
-            raise MemeFeedback('"baidu.appid" 或 "baidu.apikey" 未设置，请检查配置文件！')
-            
+            raise MemeFeedback(
+                '"baidu.appid" 或 "baidu.apikey" 未设置，请检查配置文件！'
+            )
+
         salt = str(round(time.time() * 1000))
         sign_raw = baidu_config.appid + text + salt + baidu_config.apikey
         sign = hashlib.md5(sign_raw.encode("utf8")).hexdigest()
@@ -406,9 +407,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
             ],
             "stream": False,
         }
-        resp = httpx.post(
-            openai_config.url, headers=headers, json=data, timeout=20
-        )
+        resp = httpx.post(openai_config.url, headers=headers, json=data, timeout=20)
         result = resp.json()
 
         if "choices" in result:
@@ -417,14 +416,14 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
             return result["message"]["content"]
         else:
             raise MemeFeedback(f"无法解析翻译API的响应：{result}")
-            
+
     elif trans_config.type == "gemini":
         gemini_config = trans_config.gemini
         if not gemini_config.api_key:
             raise MemeFeedback('"gemini.api_key" 未设置，请检查配置文件！')
 
         url = f"{gemini_config.api_base}/v1beta/models/{gemini_config.model}:generateContent?key={gemini_config.api_key}"
-        
+
         headers = {"Content-Type": "application/json"}
         data = {
             "contents": [
@@ -437,7 +436,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
                 }
             ]
         }
-        
+
         resp = httpx.post(url, headers=headers, json=data, timeout=30)
         resp.raise_for_status()
         result = resp.json()
