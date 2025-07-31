@@ -402,6 +402,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
                 {"role": "user", "content": f"Translate the text '{text}' into '{lang_to}', and only return the translated text without any other content."},
             ],
             "stream": False,
+            "think": False
         }
         resp = httpx.post(openai_config.url, headers=headers, json=data, timeout=20)
         result = resp.json()
