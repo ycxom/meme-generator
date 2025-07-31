@@ -24,28 +24,6 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 > 
 > 拥有更小的内存占用和更快的运行速度，欢迎使用！
 
-## 该改版支持llm模型翻译
-
-```toml
-[translate]
-# 翻译服务类型，可选 "baidu" 或 "openai"，"gemini"
-type = "gemini"
-
-[translate.baidu]
-appid = "$TRANSLATE_BAIDU_APPID" # 百度翻译的 appid
-apikey = "$TRANSLATE_BAIDU_APIKEY" # 百度翻译的 apikey
-
-[translate.openai]
-api_key = "" # OpenAI API Key / Ollama 可留空
-url = "http://127.0.0.1:11434/v1/chat/completions" # OpenAI API 的 URL / Ollama API
-model = "gemma3:4b" # OpenAI 使用的模型
-
-[translate.gemini]
-api_key = "" # Gemini API Key
-api_base = "https://generativelanguage.googleapis.com" # 官方API地址/自定义API地址
-model = "gemini-2.0-flash" # 模型
-```
-
 ## 表情列表
 
 表情详细信息、表情预览等可以在 [--> 表情列表 <--](https://github.com/MemeCrafters/meme-generator/wiki/%E8%A1%A8%E6%83%85%E5%88%97%E8%A1%A8) 查看
