@@ -370,9 +370,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
     if trans_config.type == "baidu":
         baidu_config = trans_config.baidu
         if not baidu_config.appid or not baidu_config.apikey:
-            raise MemeFeedback(
-                '"baidu.appid" 或 "baidu.apikey" 未设置，请检查配置文件！'
-            )
+            raise MemeFeedback('"baidu.appid" 或 "baidu.apikey" 未设置，请检查配置文件！')
 
         salt = str(round(time.time() * 1000))
         sign_raw = baidu_config.appid + text + salt + baidu_config.apikey
@@ -396,18 +394,23 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
         if openai_config.api_key:
             headers["Authorization"] = f"Bearer {openai_config.api_key}"
 
+        system_prompt = (
+            "You are a professional translator specializing in creating concise and impactful subtitles for videos and memes. "
+            f"Translate the following text from {lang_from} to {lang_to}. "
+            "Your translation should be short, powerful, and suitable as a subtitle. "
+            "Only return the translated text, with no extra explanations or quotation marks."
+        )
         data = {
             "model": openai_config.model,
             "messages": [
-                {
-                    "role": "system",
-                    "content": f"Translate the following text from {lang_from} to {lang_to}, just return the translated text, do not output any other content.",
-                },
+                {"role": "system", "content": system_prompt},
                 {"role": "user", "content": text},
             ],
             "stream": False,
         }
-        resp = httpx.post(openai_config.url, headers=headers, json=data, timeout=20)
+        resp = httpx.post(
+            openai_config.url, headers=headers, json=data, timeout=20
+        )
         result = resp.json()
 
         if "choices" in result:
@@ -423,20 +426,19 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
             raise MemeFeedback('"gemini.api_key" 未设置，请检查配置文件！')
 
         url = f"{gemini_config.api_base}/v1beta/models/{gemini_config.model}:generateContent?key={gemini_config.api_key}"
-
+        
+        prompt = (
+            "You are a professional translator specializing in creating concise and impactful subtitles for videos and memes. "
+            f"Translate the following text from {lang_from} to {lang_to}. "
+            "Your translation should be short, powerful, and suitable as a subtitle. "
+            "Only return the translated text, with no extra explanations or quotation marks."
+            f"\n\n{text}"
+        )
         headers = {"Content-Type": "application/json"}
         data = {
-            "contents": [
-                {
-                    "parts": [
-                        {
-                            "text": f"Translate the following text from {lang_from} to {lang_to}, just return the translated text, do not output any other content.\n\n{text}"
-                        }
-                    ]
-                }
-            ]
+            "contents": [{"parts": [{"text": prompt}]}]
         }
-
+        
         resp = httpx.post(url, headers=headers, json=data, timeout=30)
         resp.raise_for_status()
         result = resp.json()
