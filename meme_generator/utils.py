@@ -399,11 +399,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
         data = {
             "model": openai_config.model,
             "messages": [
-                {
-                    "role": "system",
-                    "content": f"Translate the following text from {lang_from} to {lang_to}, just return the translated text, do not output any other content.",
-                },
-                {"role": "user", "content": text},
+                {"role": "user", "content": f"Translate the text '{text}' into '{lang_to}', and only return the translated text without any other content."},
             ],
             "stream": False,
         }
@@ -430,7 +426,7 @@ def translate(text: str, lang_from: str = "auto", lang_to: str = "zh") -> str:
                 {
                     "parts": [
                         {
-                            "text": f"Translate the following text from {lang_from} to {lang_to}, just return the translated text, do not output any other content.\n\n{text}"
+                            "text": f"Translate the text '{text}' into '{lang_to}', and only return the translated text without any other content."
                         }
                     ]
                 }
