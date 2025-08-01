@@ -21,7 +21,7 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 
 > [!NOTE]
 > 本项目另有 Rust 重构版 [--> meme-generator-rs <--](https://github.com/MemeCrafters/meme-generator-rs)
-> 
+>
 > 拥有更小的内存占用和更快的运行速度，欢迎使用！
 
 ## 表情列表
@@ -30,6 +30,36 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 
 ## 安装、使用、配置
 
+### 本改版可使用LLM翻译
+
+```toml
+[translate]
+# 翻译服务类型，可选 "baidu" 或 "openai"，"gemini"
+type = "gemini"
+
+[translate.baidu]
+appid = "$TRANSLATE_BAIDU_APPID" # 百度翻译的 appid
+apikey = "$TRANSLATE_BAIDU_APIKEY" # 百度翻译的 apikey
+
+[translate.openai]
+api_key = "" # OpenAI API Key / Ollama 可留空
+url = "http://127.0.0.1:11434/v1/chat/completions" # OpenAI API 的 URL / Ollama API
+model = "gemma3:4b" # OpenAI 使用的模型
+
+[translate.gemini]
+api_key = "" # Gemini API Key
+api_base = "https://generativelanguage.googleapis.com" # 官方API地址/自定义API地址
+model = "gemini-2.0-flash" # 模型
+```
+
+```bash
+# 安装依赖
+pip install requirements.txt
+
+# 运行程序
+python -m meme_generator.app
+```
+
 详见 Wiki：[--> Wiki <--](https://github.com/MemeCrafters/meme-generator/wiki)
 
 ## 其他表情
@@ -37,6 +67,7 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 可以加载非本仓库内置的表情，参考 [--> 加载其他表情 <--](https://github.com/MemeCrafters/meme-generator/wiki/%E5%8A%A0%E8%BD%BD%E5%85%B6%E4%BB%96%E8%A1%A8%E6%83%85)
 
 其他表情仓库：
+
 - [MemeCrafters/meme-generator-contrib](https://github.com/MemeCrafters/meme-generator-contrib) meme-generator 额外表情仓库
 - [anyliew/meme_emoji](https://github.com/anyliew/meme_emoji) 更多热门表情包模板
 
@@ -46,16 +77,17 @@ _✨ 表情包生成器，用于制作各种沙雕表情包 ✨_
 
 需要安装 [Visual C++ 运行时](https://aka.ms/vs/17/release/VC_redist.x64.exe)
 
-相关 Issue：https://github.com/kyamagu/skia-python/issues/289
+相关 Issue：<https://github.com/kyamagu/skia-python/issues/289>
 
 - Linux 下字体异常
 
 设置 locate 为英文：
+
 ```
 export LANG=en_US.UTF-8
 ```
 
-相关 Issue：https://github.com/rust-skia/rust-skia/issues/963
+相关 Issue：<https://github.com/rust-skia/rust-skia/issues/963>
 
 ## 声明
 
