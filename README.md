@@ -52,6 +52,8 @@ api_base = "https://generativelanguage.googleapis.com" # 官方API地址/自定�
 model = "gemini-2.0-flash" # 模型
 ```
 
+### 本机运行
+
 ```bash
 # 安装依赖
 pip install requirements.txt
